@@ -1,0 +1,8 @@
+{
+  "name": "@jira-utilities/core",
+  "version": "0.0.1",
+  "description": "Lightweight wrapper around fetch plus other helpers to make using the Jira REST API easier",
+  "main": "index.js",
+  "author": "Vincent Hennebert",
+  "license": "MIT"
+}
