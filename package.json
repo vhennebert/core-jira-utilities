@@ -3,6 +3,14 @@
   "version": "0.0.1",
   "description": "Lightweight wrapper around fetch plus other helpers to make using the Jira REST API easier",
   "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "vitest"
+  },
   "author": "Vincent Hennebert",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "prettier": "3.8.1",
+    "vitest": "^3.0.0"
+  }
 }
