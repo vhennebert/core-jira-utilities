@@ -27,7 +27,7 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-const testSuite = (label, subject, baseUrl, api) => {
+const testSuite = (label, subject, baseUrl) => {
   describe(`endpoint-first style: ${label}(endpoint)`, () => {
     describe(".get()", () => {
       it("calls fetch with the correct URL", () => {
@@ -92,27 +92,28 @@ const testSuite = (label, subject, baseUrl, api) => {
     });
 
     describe(".withOptions({debug: true})", () => {
-      it(".get() logs method and api type", () => {
-        subject("issue/AIPCC-1234").withOptions({ debug: true }).get();
-        expect(console.log).toHaveBeenCalledWith("GET", api, undefined);
+      const endpoint = "issue/AIPCC-1234";
+      it(".get() logs method and endpoint", () => {
+        subject(endpoint).withOptions({ debug: true }).get();
+        expect(console.log).toHaveBeenCalledWith("GET", endpoint, undefined);
       });
 
-      it(".post(body) logs method and api type", () => {
-        subject("issue/AIPCC-1234")
-          .withOptions({ debug: true })
-          .post({ field: "value" });
+      it(".post(body) logs method and endpoint", () => {
+        subject(endpoint).withOptions({ debug: true }).post({ field: "value" });
         expect(console.log).toHaveBeenCalledWith(
           "POST",
-          api,
+          endpoint,
           expect.anything(),
         );
       });
 
-      it(".put(body) logs method and api type", () => {
-        subject("issue/AIPCC-1234")
-          .withOptions({ debug: true })
-          .put({ field: "value" });
-        expect(console.log).toHaveBeenCalledWith("PUT", api, expect.anything());
+      it(".put(body) logs method and endpoint", () => {
+        subject(endpoint).withOptions({ debug: true }).put({ field: "value" });
+        expect(console.log).toHaveBeenCalledWith(
+          "PUT",
+          endpoint,
+          expect.anything(),
+        );
       });
     });
 
@@ -148,11 +149,12 @@ const testSuite = (label, subject, baseUrl, api) => {
 
     describe("withOptions chaining", () => {
       it("merges options across multiple withOptions calls", () => {
-        subject("issue/AIPCC-1234")
+        const endpoint = "issue/AIPCC-1234";
+        subject(endpoint)
           .withOptions({ debug: true })
           .withOptions({ parseJSON: false })
           .get();
-        expect(console.log).toHaveBeenCalledWith("GET", api, undefined);
+        expect(console.log).toHaveBeenCalledWith("GET", endpoint, undefined);
       });
     });
 
@@ -161,7 +163,7 @@ const testSuite = (label, subject, baseUrl, api) => {
         const handle = subject("issue/AIPCC-1234");
         handle.withOptions({ debug: true });
         handle.get();
-        expect(console.log).not.toHaveBeenCalledWith("GET", api, undefined);
+        expect(console.log).not.toHaveBeenCalled();
       });
     });
   });
@@ -220,27 +222,28 @@ const testSuite = (label, subject, baseUrl, api) => {
     });
 
     describe(`.withOptions({debug: true})`, () => {
-      it(".get(endpoint) logs method and api type", () => {
-        subject.withOptions({ debug: true }).get("issue/AIPCC-1234");
-        expect(console.log).toHaveBeenCalledWith("GET", api, undefined);
+      const endpoint = "issue/AIPCC-1234";
+      it(".get(endpoint) logs method and endpoint", () => {
+        subject.withOptions({ debug: true }).get(endpoint);
+        expect(console.log).toHaveBeenCalledWith("GET", endpoint, undefined);
       });
 
-      it(".post(endpoint, body) logs method and api type", () => {
-        subject
-          .withOptions({ debug: true })
-          .post("issue/AIPCC-1234", { field: "value" });
+      it(".post(endpoint, body) logs method and endpoint", () => {
+        subject.withOptions({ debug: true }).post(endpoint, { field: "value" });
         expect(console.log).toHaveBeenCalledWith(
           "POST",
-          api,
+          endpoint,
           expect.anything(),
         );
       });
 
-      it(".put(endpoint, body) logs method and api type", () => {
-        subject
-          .withOptions({ debug: true })
-          .put("issue/AIPCC-1234", { field: "value" });
-        expect(console.log).toHaveBeenCalledWith("PUT", api, expect.anything());
+      it(".put(endpoint, body) logs method and endpoint", () => {
+        subject.withOptions({ debug: true }).put(endpoint, { field: "value" });
+        expect(console.log).toHaveBeenCalledWith(
+          "PUT",
+          endpoint,
+          expect.anything(),
+        );
       });
     });
 
@@ -276,11 +279,12 @@ const testSuite = (label, subject, baseUrl, api) => {
 
     describe("withOptions chaining", () => {
       it("merges options across multiple withOptions calls", () => {
+        const endpoint = "issue/AIPCC-1234";
         subject
           .withOptions({ debug: true })
           .withOptions({ parseJSON: false })
-          .get("issue/AIPCC-1234");
-        expect(console.log).toHaveBeenCalledWith("GET", api, undefined);
+          .get(endpoint);
+        expect(console.log).toHaveBeenCalledWith("GET", endpoint, undefined);
       });
     });
 
@@ -288,14 +292,14 @@ const testSuite = (label, subject, baseUrl, api) => {
       it("withOptions does not mutate the original subject object", () => {
         subject.withOptions({ debug: true });
         subject.get("issue/AIPCC-1234");
-        expect(console.log).not.toHaveBeenCalledWith("GET", api, undefined);
+        expect(console.log).not.toHaveBeenCalled();
       });
     });
   });
 };
 
-testSuite("jira", jira, BASE_URL, "api");
-testSuite("jira.agile", jira.agile, AGILE_BASE_URL, "agile");
+testSuite("jira", jira, BASE_URL);
+testSuite("jira.agile", jira.agile, AGILE_BASE_URL);
 
 describe("cross-cutting", () => {
   it("Authorization header encodes the decrypted token correctly", () => {
@@ -313,7 +317,7 @@ describe("cross-cutting", () => {
 
   it("default options do not trigger debug logging", () => {
     jira("issue/AIPCC-1234").get();
-    expect(console.log).not.toHaveBeenCalledWith("GET", "api", undefined);
+    expect(console.log).not.toHaveBeenCalled();
   });
 
   it("jira and jira.agile use independent base URLs", () => {

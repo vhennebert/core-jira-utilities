@@ -10,7 +10,7 @@ const updateIn = (obj, [key, ...keys], f, ...args) =>
 
 const fetchJira = (endpoint, { api, apiVersion, fetchParams, options }) => {
   if (options.debug) {
-    console.log(fetchParams.method, api, fetchParams.body);
+    console.log(fetchParams.method, endpoint, fetchParams.body);
   }
   return fetch(
     `${JIRA_URL}/rest/${api}/${apiVersion}/${endpoint}`,
