@@ -83,7 +83,5 @@ const createApiCaller = (api) => {
   return apiCaller;
 };
 
-const jira = createApiCaller("api");
+export const jira = createApiCaller("api");
 jira.agile = createApiCaller("agile");
-
-export default jira;

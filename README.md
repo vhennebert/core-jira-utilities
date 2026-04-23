@@ -22,7 +22,7 @@ cp .env.example .env
 ## Usage
 
 ```js
-import jira from "@jira-utilities/core";
+import { jira } from "@jira-utilities/core";
 
 // Fetch an issue
 jira("issue/PROJ-123").get().then((i) => ...);

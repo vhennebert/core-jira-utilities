@@ -36,7 +36,7 @@ Loads configuration at module initialisation time. Reads `.env` from the current
 
 ### `index.js`
 
-Exports `jira` as the default export — a function that is also an object, supporting two call styles:
+Exports `jira` as a named export — a function that is also an object, supporting two call styles:
 
 - **Endpoint-first**: `jira(endpoint).get()` / `.post(body)` / `.put(body)` / `.withOptions({...})`
 - **Direct**: `jira.get(endpoint)` / `jira.post(endpoint, body)` / `jira.put(endpoint, body)` / `jira.withOptions({...})`
