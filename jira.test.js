@@ -15,7 +15,7 @@ vi.stubGlobal("fetch", mockFetch);
 
 // Imported dynamically so that doMock can do its job first
 // doMock is necessary over mock to use global constants
-const { jira } = await import("./index.js");
+const { jira } = await import("./jira.js");
 
 beforeEach(() => {
   mockFetch.mockReset();
