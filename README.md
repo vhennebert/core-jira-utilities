@@ -22,10 +22,14 @@ cp .env.example .env
 ## Usage
 
 ```js
+import { json, text } from "node:stream/consumers";
 import { jira } from "@jira-utilities/core";
 
-// Fetch an issue
-jira("issue/PROJ-123").get().then((i) => ...);
+// Fetch an issue as a parsed JSON object
+jira("issue/PROJ-123").get().then(json).then((issue) => ...);
+
+// Fetch an issue as raw text
+jira("issue/PROJ-123").get().then(text).then((str) => ...);
 
 // Update an issue
 jira("issue/PROJ-123").put({ fields: { summary: "New summary" } }).then(...);
@@ -40,7 +44,7 @@ jira("issue").post({
 }).then(...);
 
 // The endpoint can be passed directly to the method instead:
-jira.get('issue/PROJ-123').then(...);
+jira.get('issue/PROJ-123').then(json).then(...);
 jira.put('issue/PROJ-123', { fields: { summary: 'New summary' } }).then(...);
 jira.post('issue', { fields: { ... } }).then(...);
 ```
@@ -59,12 +63,9 @@ jira.agile.post("sprint", { name: "Sprint 1", originBoardId: 42 }).then(...);
 ### Options
 
 ```js
-// Disable JSON parsing (returns raw response body as a string)
-jira("issue/PROJ-123").withOptions({ parseJSON: false }).get().then(...);
-
 // Enable debug logging
-jira("issue/PROJ-123").withOptions({ debug: true }).get().then(...);
+jira("issue/PROJ-123").withOptions({ debug: true }).get().then(json).then(...);
 
-// Options can be chained and work with both call styles
-jira.withOptions({ parseJSON: false }).get("issue/PROJ-123").then(...);
+// withOptions works with both call styles
+jira.withOptions({ debug: true }).get("issue/PROJ-123").then(json).then(...);
 ```

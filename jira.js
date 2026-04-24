@@ -15,14 +15,15 @@ const fetchJira = (endpoint, { api, apiVersion, fetchParams, options }) => {
   return fetch(
     `${JIRA_URL}/rest/${api}/${apiVersion}/${endpoint}`,
     assocIn(fetchParams, ["headers", "Authorization"], JIRA_AUTHORIZATION),
-  )
-    .then((res) => Promise.all([res, res.text()]))
-    .then(([res, body]) => {
-      if (!res.ok) {
-        throw new Error(`HTTP error ${res.status} ${res.statusText}: ${body}`);
-      }
-      return body !== "" && options.parseJSON ? JSON.parse(body) : body;
-    });
+  ).then(async (res) => {
+    if (!res.ok) {
+      const errorMsge = await res.text();
+      throw new Error(
+        `HTTP error ${res.status} ${res.statusText}: ${errorMsge}`,
+      );
+    }
+    return res.body;
+  });
 };
 
 const createApiCaller = (api) => {
@@ -37,7 +38,6 @@ const createApiCaller = (api) => {
     },
     options: {
       debug: false,
-      parseJSON: true,
     },
   };
   const fetchJiraWithBody = (endpoint, params, method, body) =>

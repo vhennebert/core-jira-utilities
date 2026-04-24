@@ -26,7 +26,7 @@ npm test -- run  # run all tests once
 
 - **Framework**: vitest
 - **TDD for non-trivial code**: write a failing test first, then the implementation
-- Test files live alongside their source files (`index.test.js`, `env.test.js`)
+- Test files live alongside their source files (`jira.test.js`, `env.test.js`)
 
 ## Architecture
 
@@ -34,7 +34,7 @@ npm test -- run  # run all tests once
 
 Loads configuration at module initialisation time. Reads `.env` from the current working directory (if present), then merges with `process.env` (system env takes precedence). Validates that required variables are present, decrypts the token via `gpg --decrypt` if `JIRA_TOKEN_PATH` is set, otherwise falls back to `JIRA_TOKEN`. Exports `JIRA_URL` and `JIRA_AUTHORIZATION`.
 
-### `index.js`
+### `jira.js`
 
 Exports `jira` as a named export — a function that is also an object, supporting two call styles:
 
@@ -43,9 +43,13 @@ Exports `jira` as a named export — a function that is also an object, supporti
 
 `jira.agile` mirrors the same interface but targets `/rest/agile/latest` instead of `/rest/api/latest`.
 
-`withOptions` supports `{ debug, parseJSON }` and is immutable — it returns a new object without mutating the original.
+`withOptions` supports `{ debug }` and is immutable — it returns a new object without mutating the original. Responses always return a `ReadableStream`; use `node:stream/consumers` (`json`, `text`, …) in the call chain to consume it.
+
+### `index.js`
+
+Barrel re-export of all named exports. Add new utilities here as the library grows.
 
 ### Testing approach
 
-- `index.test.js` mocks `./env.js` entirely via `vi.mock`, injecting fixed `JIRA_URL` and `JIRA_AUTHORIZATION` values. The test suite is parameterised and runs once for `jira` and once for `jira.agile`.
+- `jira.test.js` mocks `./env.js` entirely via `vi.doMock`, injecting fixed `JIRA_URL` and `JIRA_AUTHORIZATION` values. The test suite is parameterised and runs once for `jira` and once for `jira.agile`.
 - `env.test.js` mocks `node:fs` and `node:child_process`, reloading the module fresh per test via `vi.resetModules()` + dynamic import.

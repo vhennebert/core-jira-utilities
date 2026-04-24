@@ -19,7 +19,11 @@ const { jira } = await import("./jira.js");
 
 beforeEach(() => {
   mockFetch.mockReset();
-  mockFetch.mockResolvedValue({ ok: true, text: () => Promise.resolve("{}") });
+  mockFetch.mockResolvedValue({
+    ok: true,
+    body: new ReadableStream(),
+    text: () => Promise.resolve("{}"),
+  });
   vi.spyOn(console, "log").mockImplementation(() => {});
 });
 
@@ -117,42 +121,12 @@ const testSuite = (label, subject, baseUrl) => {
       });
     });
 
-    describe(".withOptions({parseJSON: false})", () => {
-      it(".get() still calls fetch with the correct URL and GET method", () => {
-        subject("issue/AIPCC-1234").withOptions({ parseJSON: false }).get();
-        expect(mockFetch).toHaveBeenCalledWith(
-          `${baseUrl}/issue/AIPCC-1234`,
-          expect.objectContaining({ method: "GET" }),
-        );
-      });
-
-      it(".post(body) still calls fetch with POST method and body", () => {
-        const body = { field: "value" };
-        subject("issue/AIPCC-1234")
-          .withOptions({ parseJSON: false })
-          .post(body);
-        expect(mockFetch).toHaveBeenCalledWith(
-          `${baseUrl}/issue/AIPCC-1234`,
-          expect.objectContaining({ method: "POST", body }),
-        );
-      });
-
-      it(".put(body) still calls fetch with PUT method and body", () => {
-        const body = { field: "value" };
-        subject("issue/AIPCC-1234").withOptions({ parseJSON: false }).put(body);
-        expect(mockFetch).toHaveBeenCalledWith(
-          `${baseUrl}/issue/AIPCC-1234`,
-          expect.objectContaining({ method: "PUT", body }),
-        );
-      });
-    });
-
     describe("withOptions chaining", () => {
-      it("merges options across multiple withOptions calls", () => {
+      it("later call overrides earlier one", () => {
         const endpoint = "issue/AIPCC-1234";
         subject(endpoint)
+          .withOptions({ debug: false })
           .withOptions({ debug: true })
-          .withOptions({ parseJSON: false })
           .get();
         expect(console.log).toHaveBeenCalledWith("GET", endpoint, undefined);
       });
@@ -247,42 +221,12 @@ const testSuite = (label, subject, baseUrl) => {
       });
     });
 
-    describe(`.withOptions({parseJSON: false})`, () => {
-      it(".get(endpoint) still calls fetch with correct URL and GET method", () => {
-        subject.withOptions({ parseJSON: false }).get("issue/AIPCC-1234");
-        expect(mockFetch).toHaveBeenCalledWith(
-          `${baseUrl}/issue/AIPCC-1234`,
-          expect.objectContaining({ method: "GET" }),
-        );
-      });
-
-      it(".post(endpoint, body) still calls fetch with POST method and body", () => {
-        const body = { field: "value" };
-        subject
-          .withOptions({ parseJSON: false })
-          .post("issue/AIPCC-1234", body);
-        expect(mockFetch).toHaveBeenCalledWith(
-          `${baseUrl}/issue/AIPCC-1234`,
-          expect.objectContaining({ method: "POST", body }),
-        );
-      });
-
-      it(".put(endpoint, body) still calls fetch with PUT method and body", () => {
-        const body = { field: "value" };
-        subject.withOptions({ parseJSON: false }).put("issue/AIPCC-1234", body);
-        expect(mockFetch).toHaveBeenCalledWith(
-          `${baseUrl}/issue/AIPCC-1234`,
-          expect.objectContaining({ method: "PUT", body }),
-        );
-      });
-    });
-
     describe("withOptions chaining", () => {
-      it("merges options across multiple withOptions calls", () => {
+      it("later call overrides earlier one", () => {
         const endpoint = "issue/AIPCC-1234";
         subject
+          .withOptions({ debug: false })
           .withOptions({ debug: true })
-          .withOptions({ parseJSON: false })
           .get(endpoint);
         expect(console.log).toHaveBeenCalledWith("GET", endpoint, undefined);
       });
