@@ -83,5 +83,41 @@ const createApiCaller = (api) => {
   return apiCaller;
 };
 
+/**
+ * Jira REST API client targeting `/rest/api/latest`.
+ *
+ * Two equivalent call styles are supported:
+ *
+ * ```js
+ * // Endpoint-first: call jira(endpoint), then invoke a method
+ * jira("issue/PROJ-123").get()
+ * jira("issue/PROJ-123").put({ fields: { summary: "New title" } })
+ *
+ * // Direct: pass the endpoint to the method
+ * jira.get("issue/PROJ-123")
+ * jira.put("issue/PROJ-123", { fields: { summary: "New title" } })
+ * ```
+ *
+ * All methods resolve with a `ReadableStream`. Use `node:stream/consumers`
+ * to materialise the response:
+ *
+ * ```js
+ * import { json, text } from "node:stream/consumers";
+ * jira("issue/PROJ-123").get().then(json).then((issue) => { ... })
+ * jira("issue/PROJ-123").get().then(text).then((str) => { ... })
+ * ```
+ *
+ * `.withOptions()` returns a new handle without mutating the original:
+ *
+ * ```js
+ * const debugJira = jira.withOptions({ debug: true })
+ * debugJira.get("issue/PROJ-123")  // logs: GET issue/PROJ-123
+ * jira.get("issue/PROJ-123")       // unchanged — no logging
+ * ```
+ *
+ * `jira.agile` mirrors this interface for `/rest/agile/latest`.
+ *
+ * @param {string} endpoint - API endpoint relative to `/rest/api/latest/`.
+ */
 export const jira = createApiCaller("api");
 jira.agile = createApiCaller("agile");
