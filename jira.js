@@ -46,7 +46,7 @@ const createApiCaller = (api) => {
       updateIn(params, ["fetchParams"], (fp) =>
         Object.assign(
           assocIn(fp, ["headers", "Content-Type"], "application/json"),
-          { method, body },
+          { method, body: JSON.stringify(body) },
         ),
       ),
     );

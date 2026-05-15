@@ -70,7 +70,7 @@ const testSuite = (label, subject, baseUrl) => {
               Accept: "application/json",
               "Content-Type": "application/json",
             }),
-            body,
+            body: JSON.stringify(body),
           }),
         );
       });
@@ -89,7 +89,7 @@ const testSuite = (label, subject, baseUrl) => {
               Accept: "application/json",
               "Content-Type": "application/json",
             }),
-            body,
+            body: JSON.stringify(body),
           }),
         );
       });
@@ -171,7 +171,7 @@ const testSuite = (label, subject, baseUrl) => {
               Authorization: EXPECTED_AUTH,
               "Content-Type": "application/json",
             }),
-            body,
+            body: JSON.stringify(body),
           }),
         );
       });
@@ -189,7 +189,7 @@ const testSuite = (label, subject, baseUrl) => {
               Authorization: EXPECTED_AUTH,
               "Content-Type": "application/json",
             }),
-            body,
+            body: JSON.stringify(body),
           }),
         );
       });
