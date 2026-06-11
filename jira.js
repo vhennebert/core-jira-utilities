@@ -55,6 +55,8 @@ const createApiCaller = (api) => {
     get: (endpoint) => fetchJira(endpoint, params),
     post: (endpoint, body) => fetchJiraWithBody(endpoint, params, "POST", body),
     put: (endpoint, body) => fetchJiraWithBody(endpoint, params, "PUT", body),
+    del: (endpoint) =>
+      fetchJira(endpoint, assocIn(params, ["fetchParams", "method"], "DELETE")),
   });
 
   const createMethodsBoundToEndpoint = (endpoint) => (params) =>

@@ -95,6 +95,24 @@ const testSuite = (label, subject, baseUrl) => {
       });
     });
 
+    describe(".del()", () => {
+      it("calls fetch with DELETE method, Authorization and Accept headers, and no body", () => {
+        subject("issue/AIPCC-1234").del();
+        expect(mockFetch).toHaveBeenCalledWith(
+          `${baseUrl}/issue/AIPCC-1234`,
+          expect.objectContaining({
+            method: "DELETE",
+            headers: expect.objectContaining({
+              Authorization: EXPECTED_AUTH,
+              Accept: "application/json",
+            }),
+          }),
+        );
+        const [, opts] = mockFetch.mock.calls[0];
+        expect(opts.body).toBeUndefined();
+      });
+    });
+
     describe(".withOptions({debug: true})", () => {
       const endpoint = "issue/AIPCC-1234";
       it(".get() logs method and endpoint", () => {
@@ -119,6 +137,11 @@ const testSuite = (label, subject, baseUrl) => {
           expect.anything(),
         );
       });
+
+      it(".del() logs method and endpoint", () => {
+        subject(endpoint).withOptions({ debug: true }).del();
+        expect(console.log).toHaveBeenCalledWith("DELETE", endpoint, undefined);
+      });
     });
 
     describe("withOptions chaining", () => {
@@ -142,7 +165,7 @@ const testSuite = (label, subject, baseUrl) => {
     });
   });
 
-  describe(`flat style: ${label}.get / ${label}.post / ${label}.put / ${label}.withOptions`, () => {
+  describe(`flat style: ${label}.get / ${label}.post / ${label}.put / ${label}.del / ${label}.withOptions`, () => {
     describe(`.get(endpoint)`, () => {
       it("calls fetch with correct URL, GET method and auth headers", () => {
         subject.get("issue/AIPCC-1234");
@@ -195,6 +218,24 @@ const testSuite = (label, subject, baseUrl) => {
       });
     });
 
+    describe(`.del(endpoint)`, () => {
+      it("calls fetch with DELETE method, Authorization and Accept headers, and no body", () => {
+        subject.del("issue/AIPCC-1234");
+        expect(mockFetch).toHaveBeenCalledWith(
+          `${baseUrl}/issue/AIPCC-1234`,
+          expect.objectContaining({
+            method: "DELETE",
+            headers: expect.objectContaining({
+              Authorization: EXPECTED_AUTH,
+              Accept: "application/json",
+            }),
+          }),
+        );
+        const [, opts] = mockFetch.mock.calls[0];
+        expect(opts.body).toBeUndefined();
+      });
+    });
+
     describe(`.withOptions({debug: true})`, () => {
       const endpoint = "issue/AIPCC-1234";
       it(".get(endpoint) logs method and endpoint", () => {
@@ -218,6 +259,11 @@ const testSuite = (label, subject, baseUrl) => {
           endpoint,
           expect.anything(),
         );
+      });
+
+      it(".del(endpoint) logs method and endpoint", () => {
+        subject.withOptions({ debug: true }).del(endpoint);
+        expect(console.log).toHaveBeenCalledWith("DELETE", endpoint, undefined);
       });
     });
 
