@@ -1,4 +1,4 @@
-import { vi, describe, it, expect, beforeEach, afterEach } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const EXPECTED_AUTH = `Basic ${Buffer.from("test@example.com:fake-token").toString("base64")}`;
 const JIRA_URL = "https://test.atlassian.net";

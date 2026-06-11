@@ -1,4 +1,4 @@
-import { JIRA_URL, JIRA_AUTHORIZATION } from "./env.js";
+import { JIRA_AUTHORIZATION, JIRA_URL } from "./env.js";
 
 const assocIn = (obj, [key, ...keys], val) =>
   key ? { ...obj, [key]: assocIn(obj[key] ?? {}, keys, val) } : val;
